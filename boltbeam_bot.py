@@ -42,11 +42,6 @@ async def new_user_confirmed_rules(ctx):
     and that the command will do nothing further.
     Afterwards, the user input bot command is deleted from the channel to keep the rules channel clean.
     """
-    # log.debug('rules_confirmed command received')
-    # log.debug(f'ctx_channel: {ctx.channel.name}, ctx_author.roles: {ctx.author.roles}')
-    # log.debug(f'role names: {[role.name for role in ctx.author.roles]}')
-    # log.debug(f'first condition: {ctx.channel.name == "rules"}')
-    # log.debug(f'second condition: {"Ice Beams" not in [role.name for role in ctx.author.roles]}')
     if ctx.channel.name == 'rules' and 'Ice Beams' not in [role.name for role in ctx.author.roles]:
         ice_beam_role = discord.utils.get(ctx.guild.roles, name='Ice Beams')
         await ctx.author.add_roles(ice_beam_role, reason='User verified rules')
@@ -63,6 +58,18 @@ async def new_user_confirmed_rules(ctx):
 
     # delete bot command
     await ctx.message.delete()
+
+@bot.command(name='store_value')
+async def store_value(ctx, arg):
+    bot.stored_value = arg
+
+@bot.command(name='return_value')
+async def return_value(ctx):
+    received_channel = ctx.channel
+    if not bot.stored_value:
+        await received_channel.send('No stored value')
+    else:
+        await received_channel.send(bot.stored_value)
 
 
 bot.run(bot_token)
